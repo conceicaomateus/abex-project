@@ -8,18 +8,18 @@ export class UserController {
   constructor(private readonly _userService: UserService) {}
 
   @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    return await this._userService.create(createUserDto);
+  create(@Body() createUserDto: CreateUserDto) {
+    return this._userService.create(createUserDto);
   }
 
   @Get()
-  async findAll() {
-    return await this._userService.findAll();
+  findAll() {
+    return this._userService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this._userService.findOne(+id);
+    return this._userService.findOne(id);
   }
 
   @Patch(':id')
@@ -29,6 +29,11 @@ export class UserController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this._userService.remove(+id);
+    return this._userService.remove(id);
+  }
+
+  @Get('username/:username')
+  isUsernameAvailable(@Param('username') username: string) {
+    return this._userService.isUsernameAvailable(username);
   }
 }

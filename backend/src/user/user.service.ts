@@ -8,8 +8,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UserService {
   constructor(private readonly _prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
-    return await this._prisma.users.create({
+  create(createUserDto: CreateUserDto) {
+    const isUsernameAvailable = this.isUsernameAvailable(createUserDto.username);
+
+    if (isUsernameAvailable) {
+      throw new Error('Username is not available');
+    }
+
+    return this._prisma.users.create({
       data: {
         id: randomUUID(),
         email: createUserDto.email,
@@ -24,15 +30,25 @@ export class UserService {
     });
   }
 
-  async findAll() {
-    return await this._prisma.users.findMany();
+  findAll() {
+    return this._prisma.users.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: string) {
+    return this._prisma.users.findUnique({
+      where: {
+        id: id,
+      },
+    });
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
+    const isUsernameAvailable = this.isUsernameAvailable(updateUserDto.username);
+
+    if (isUsernameAvailable) {
+      throw new Error('Username is not available');
+    }
+
     this._prisma.users.update({
       where: { id: id },
       data: {
@@ -44,7 +60,26 @@ export class UserService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  remove(id: string) {
+    const user = this.findOne(id);
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    this._prisma.users.update({
+      data: {
+        active: false,
+      },
+      where: { id: id },
+    });
+  }
+
+  isUsernameAvailable(username: string) {
+    return this._prisma.users.findFirst({
+      where: {
+        username: username,
+      },
+    });
   }
 }

@@ -1,3 +1,7 @@
 export class User {
-  constructor() {}
+  active: boolean;
+
+  delete() {
+    this.active = false;
+  }
 }
