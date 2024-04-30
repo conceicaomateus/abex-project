@@ -3,6 +3,7 @@ import { AppMiddlewares } from './AppMiddlewares';
 import { AppProviders } from './AppProviders';
 import { Login } from './pages/login';
 import { Users } from './pages/users';
+import { CreateUser } from './pages/users/create';
 import { MainTemplate } from './templates/main';
 
 export const Router = createBrowserRouter([
@@ -27,6 +28,10 @@ export const Router = createBrowserRouter([
           {
             path: '/users',
             element: <Users />,
+          },
+          {
+            path: '/create-users',
+            element: <CreateUser />,
           },
           {
             path: '/settings',

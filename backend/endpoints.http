@@ -3,9 +3,9 @@ POST http://localhost:3000/user
 Content-Type: application/json
 
 {
-  "name": "Jerry Smith 3",
-  "username": "jerrysmith 3",
-  "email": "jerry.smith3@email.com",
+  "name": "Jerry Smith9",
+  "username": "jerrysmith5",
+  "email": "jerry.smith5@email.com",
   "password": "123456"
 }
 

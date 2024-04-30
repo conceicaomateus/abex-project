@@ -76,10 +76,12 @@ export class UserService {
   }
 
   isUsernameAvailable(username: string) {
-    return this._prisma.users.findFirst({
+    const hasUser = this._prisma.users.findFirst({
       where: {
         username: username,
       },
     });
+
+    return !hasUser;
   }
 }

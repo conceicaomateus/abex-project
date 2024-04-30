@@ -21,9 +21,19 @@ import {
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Link } from 'react-router-dom';
+import { User } from '@/models/user';
+import { loadUsers } from '@/services/user/load';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export function Users() {
+  const navigate = useNavigate();
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    loadUsers().then((res) => setUsers(res));
+  }, []);
+
   return (
     <>
       <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -64,7 +74,7 @@ export function Users() {
               <TabsTrigger value="inactive">Inactive</TabsTrigger>
             </TabsList>
             <div className="ml-auto flex items-center gap-2">
-              <Button size="sm" className="h-7 gap-1">
+              <Button size="sm" className="h-7 gap-1" onClick={() => navigate('/create-users')}>
                 <PlusCircle className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Add User</span>
               </Button>
@@ -94,60 +104,35 @@ export function Users() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    <TableRow>
-                      <TableCell className="hidden sm:table-cell">
-                        <image className="aspect-square rounded-md object-cover" height="64" width="64" />
-                      </TableCell>
-                      <TableCell className="md:table-cell">clvh0sjfx0000356uzmk7z9v1</TableCell>
-                      <TableCell className="font-medium">Laser Lemonade Machine</TableCell>
-                      <TableCell className="font-medium">teste@teste.com</TableCell>
-                      <TableCell className="font-medium">teste@teste.com</TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">Active</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button aria-haspopup="true" size="icon" variant="ghost">
-                              <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">Toggle menu</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem>Delete</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="hidden sm:table-cell">
-                        <image className="aspect-square rounded-md object-cover" height="64" width="64" />
-                      </TableCell>
-                      <TableCell className="md:table-cell">clvh0sjfx0000356uzmk7z9v1</TableCell>
-                      <TableCell className="font-medium">Hypernova Headphones</TableCell>
-                      <TableCell className="font-medium">teste@teste.com</TableCell>
-                      <TableCell className="font-medium">teste@teste.com</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">Inactive</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button aria-haspopup="true" size="icon" variant="ghost">
-                              <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">Toggle menu</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem>Delete</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
+                    {users?.map(({ id, email, name, username, active }) => (
+                      <TableRow key={id}>
+                        <TableCell className="hidden sm:table-cell">
+                          <image className="aspect-square rounded-md object-cover" height="64" width="64" />
+                        </TableCell>
+                        <TableCell className="md:table-cell">{id}</TableCell>
+                        <TableCell className="font-medium">{name}</TableCell>
+                        <TableCell className="font-medium">{username}</TableCell>
+                        <TableCell className="font-medium">{email}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">{active ? 'Active' : 'Inactive'}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button aria-haspopup="true" size="icon" variant="ghost">
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Toggle menu</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem>Edit</DropdownMenuItem>
+                              <DropdownMenuItem>Delete</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </CardContent>
