@@ -8,14 +8,16 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UserService {
   constructor(private readonly _prisma: PrismaService) {}
 
-  create(createUserDto: CreateUserDto) {
-    const isUsernameAvailable = this.isUsernameAvailable(createUserDto.username);
-
-    if (isUsernameAvailable) {
+  async create(createUserDto: CreateUserDto) {
+    if (!(await this.isUsernameAvailable(createUserDto.username))) {
       throw new Error('Username is not available');
     }
 
-    return this._prisma.users.create({
+    if (!(await this.isEmailAvailable(createUserDto.email))) {
+      throw new Error('Email is not available');
+    }
+
+    return this._prisma.user.create({
       data: {
         id: randomUUID(),
         email: createUserDto.email,
@@ -31,11 +33,11 @@ export class UserService {
   }
 
   findAll() {
-    return this._prisma.users.findMany();
+    return this._prisma.user.findMany();
   }
 
   findOne(id: string) {
-    return this._prisma.users.findUnique({
+    return this._prisma.user.findUnique({
       where: {
         id: id,
       },
@@ -49,7 +51,7 @@ export class UserService {
       throw new Error('Username is not available');
     }
 
-    this._prisma.users.update({
+    this._prisma.user.update({
       where: { id: id },
       data: {
         email: updateUserDto.email,
@@ -67,7 +69,7 @@ export class UserService {
       throw new Error('User not found');
     }
 
-    this._prisma.users.update({
+    this._prisma.user.update({
       data: {
         active: false,
       },
@@ -75,10 +77,20 @@ export class UserService {
     });
   }
 
-  isUsernameAvailable(username: string) {
-    const hasUser = this._prisma.users.findFirst({
+  async isUsernameAvailable(username: string) {
+    const hasUser = await this._prisma.user.findFirst({
       where: {
         username: username,
+      },
+    });
+
+    return !hasUser;
+  }
+
+  async isEmailAvailable(email: string) {
+    const hasUser = await this._prisma.user.findFirst({
+      where: {
+        email: email,
       },
     });
 

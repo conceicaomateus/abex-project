@@ -1,7 +1,1 @@
-export class User {
-  active: boolean;
-
-  delete() {
-    this.active = false;
-  }
-}
+export class User {}
