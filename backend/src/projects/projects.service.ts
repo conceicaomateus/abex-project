@@ -1,26 +1,67 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/prisma.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 
 @Injectable()
 export class ProjectsService {
-  create(createProjectDto: CreateProjectDto) {
-    return 'This action adds a new project';
+  constructor(private readonly _prisma: PrismaService) {}
+
+  async create(createProjectDto: CreateProjectDto) {
+    return await this._prisma.project.create({
+      data: {
+        name: createProjectDto.name,
+        description: createProjectDto.description,
+        endDate: createProjectDto.endDate,
+        schedule: createProjectDto.schedule,
+        vacancies: createProjectDto.vacancies,
+        userId: createProjectDto.userId,
+      },
+      select: {
+        id: true,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all projects`;
+  async findAll() {
+    return await this._prisma.project.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} project`;
+  async findOne(id: number) {
+    return await this._prisma.project.findUnique({
+      where: {
+        id: id,
+      },
+    });
   }
 
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
+  async update(id: number, updateProjectDto: UpdateProjectDto) {
+    const project = await this._prisma.project.findUnique({
+      where: { id: id },
+    });
+
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
+    return await this._prisma.project.update({
+      where: { id: id },
+      data: {
+        name: updateProjectDto.name ?? project.name,
+        description: updateProjectDto.description ?? project.description,
+        endDate: updateProjectDto.endDate ?? project.endDate,
+        schedule: updateProjectDto.schedule ?? project.schedule,
+        vacancies: updateProjectDto.vacancies ?? project.vacancies,
+      },
+    });
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    await this._prisma.project.update({
+      where: { id: id },
+      data: { active: false },
+    });
+
     return `This action removes a #${id} project`;
   }
 }

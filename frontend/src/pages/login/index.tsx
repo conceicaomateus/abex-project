@@ -2,9 +2,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FormEvent } from 'react';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 export function Login() {
+  const { register, handleSubmit, watch } = useForm();
+
   const navigate = useNavigate();
 
   const login = (e: FormEvent<HTMLFormElement>) => {

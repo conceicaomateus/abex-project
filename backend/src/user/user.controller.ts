@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Roles } from 'src/auth/roles/roles.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
@@ -8,32 +9,33 @@ export class UserController {
   constructor(private readonly _userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this._userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this._userService.create(createUserDto);
   }
 
+  @Roles('admin')
   @Get()
-  findAll() {
-    return this._userService.findAll();
+  async findAll() {
+    return await this._userService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this._userService.findOne(id);
+  async findOne(@Param('id') id: number) {
+    return await this._userService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this._userService.update(id, updateUserDto);
+  async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+    return await this._userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this._userService.remove(id);
+  async remove(@Param('id') id: number) {
+    return await this._userService.remove(id);
   }
 
   @Get('username/:username')
-  isUsernameAvailable(@Param('username') username: string) {
-    return this._userService.isUsernameAvailable(username);
+  async isUsernameAvailable(@Param('username') username: string) {
+    return await this._userService.isUsernameAvailable(username);
   }
 }
