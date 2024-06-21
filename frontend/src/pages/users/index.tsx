@@ -22,7 +22,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User } from '@/models/user';
-import { loadUsers } from '@/services/user/load';
+import { LoadUsers } from '@/services/project-manager/load';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -31,7 +31,7 @@ export function Users() {
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    loadUsers().then((res) => setUsers(res));
+    LoadUsers.execute().then((res) => setUsers(res));
   }, []);
 
   return (
@@ -95,7 +95,6 @@ export function Users() {
                       </TableHead>
                       <TableHead>Id</TableHead>
                       <TableHead>Name</TableHead>
-                      <TableHead>Username</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>
@@ -104,14 +103,13 @@ export function Users() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {users?.map(({ id, email, name, username, active }) => (
+                    {users?.map(({ id, email, name, active }) => (
                       <TableRow key={id}>
                         <TableCell className="hidden sm:table-cell">
                           <image className="aspect-square rounded-md object-cover" height="64" width="64" />
                         </TableCell>
                         <TableCell className="md:table-cell">{id}</TableCell>
                         <TableCell className="font-medium">{name}</TableCell>
-                        <TableCell className="font-medium">{username}</TableCell>
                         <TableCell className="font-medium">{email}</TableCell>
                         <TableCell>
                           <Badge variant="secondary">{active ? 'Active' : 'Inactive'}</Badge>

@@ -1,23 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Role } from 'src/auth/roles/roles.enum';
 import { PrismaService } from 'src/database/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
-export class UserService {
+export class UserService implements OnModuleInit {
   constructor(private readonly _prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
-    if (!(await this.isUsernameAvailable(createUserDto.username))) throw new Error('Username is not available');
+  async onModuleInit() {
+    const existsAdmin = await this.findByEmail('admin');
 
+    if (existsAdmin?.id) return;
+
+    this.create({
+      email: 'admin',
+      firstName: 'admin',
+      lastName: 'admin',
+      password: 'admin',
+      role: Role.Admin,
+    });
+  }
+
+  async create(createUserDto: CreateUserDto) {
     if (!(await this.isEmailAvailable(createUserDto.email))) throw new Error('Email is not available');
 
     return await this._prisma.user.create({
       data: {
         email: createUserDto.email,
-        name: createUserDto.name,
+        firstName: createUserDto.firstName,
+        lastName: createUserDto.lastName,
         password: createUserDto.password,
-        username: createUserDto.username,
+        role: createUserDto.role,
       },
       select: {
         id: true,
@@ -37,27 +51,18 @@ export class UserService {
     });
   }
 
-  async findByUsername(username: string) {
-    return await this._prisma.user.findFirst({
-      where: {
-        username: username,
-      },
-    });
-  }
-
   async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
-    const isUsernameAvailable = await this.isUsernameAvailable(updateUserDto.username);
 
-    if (isUsernameAvailable) throw new Error('Username is not available');
+    if (!(await this.isEmailAvailable(updateUserDto.email))) throw new Error('Email is not available');
 
     await this._prisma.user.update({
       where: { id: id },
       data: {
         email: updateUserDto.email ?? user.email,
-        name: updateUserDto.name ?? user.name,
+        firstName: updateUserDto.firstName ?? user.firstName,
+        lastName: updateUserDto.lastName ?? user.lastName,
         password: updateUserDto.password ?? user.password,
-        username: updateUserDto.username ?? user.username,
       },
     });
   }
@@ -65,9 +70,7 @@ export class UserService {
   async remove(id: number) {
     const user = await this.findOne(id);
 
-    if (!user) {
-      throw new Error('User not found');
-    }
+    if (!user) throw new Error('User not found');
 
     await this._prisma.user.update({
       data: {
@@ -77,14 +80,13 @@ export class UserService {
     });
   }
 
-  async isUsernameAvailable(username: string) {
-    const hasUser = await this._prisma.user.findFirst({
+  async findByEmail(email: string) {
+    return await this._prisma.user.findFirst({
       where: {
-        username: username,
+        email: email,
       },
     });
-
-    return !hasUser;
+  
   }
 
   async isEmailAvailable(email: string) {

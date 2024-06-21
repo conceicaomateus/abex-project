@@ -11,8 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { InputForm } from '@/components/ui/input-form';
 import { useToast } from '@/components/ui/use-toast';
-import { createUser } from '@/services/user/create';
-import { isUsernameAvailable } from '@/services/user/is-username-available';
+import { createUser } from '@/services/project-manager/create';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
@@ -24,7 +23,7 @@ type IUserForm = {
 };
 
 export function CreateUser() {
-  const { register, handleSubmit, setFocus } = useForm<IUserForm>();
+  const { register, handleSubmit } = useForm<IUserForm>();
   const { toast } = useToast();
 
   const onSubmit = (data: IUserForm) => {
@@ -32,7 +31,6 @@ export function CreateUser() {
       email: data.email,
       name: data.name,
       password: data.password,
-      username: data.username,
     });
 
     toast({
@@ -41,19 +39,19 @@ export function CreateUser() {
     });
   };
 
-  const usernameAvailable = async (username: string) => {
-    const response = await isUsernameAvailable(username);
+  // const usernameAvailable = async (username: string) => {
+  //   const response = await isUsernameAvailable(username);
 
-    if (!response) {
-      toast({
-        title: 'Username not available',
-        description: 'Please choose another username',
-        variant: 'destructive',
-      });
+  //   if (!response) {
+  //     toast({
+  //       title: 'Username not available',
+  //       description: 'Please choose another username',
+  //       variant: 'destructive',
+  //     });
 
-      setFocus('username');
-    }
-  };
+  //     setFocus('username');
+  //   }
+  // };
 
   return (
     <>
@@ -92,7 +90,7 @@ export function CreateUser() {
             <Card x-chunk="dashboard-04-chunk-1">
               <CardContent className="flex flex-col gap-4 p-8">
                 <InputForm {...register('name')} />
-                <InputForm {...register('username')} onBlur={(e) => usernameAvailable(e.target.value as string)} />
+                <InputForm {...register('username')} />
                 <InputForm {...register('email')} />
                 <InputForm {...register('password')} />
               </CardContent>

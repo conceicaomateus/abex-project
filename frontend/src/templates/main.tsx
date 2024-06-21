@@ -1,4 +1,4 @@
-import { Home, Package2, PanelsTopLeft, Settings, Users } from 'lucide-react';
+import { Home, Package2, PanelsTopLeft, Users } from 'lucide-react';
 
 import { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
@@ -22,9 +22,6 @@ export function MainTemplate() {
           <NavItem href="/" icon={Home} name="Dashboard" onClick={setHighlight} highlight={highlight} />
           <NavItem href="/projects" icon={PanelsTopLeft} name="Projects" onClick={setHighlight} highlight={highlight} />
           <NavItem href="/users" icon={Users} name="Users" onClick={setHighlight} highlight={highlight} />
-        </nav>
-        <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-4">
-          <NavItem href="/settings" icon={Settings} name="Settings" onClick={setHighlight} highlight={highlight} />
         </nav>
       </aside>
 

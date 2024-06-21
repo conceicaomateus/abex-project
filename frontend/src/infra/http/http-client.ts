@@ -1,6 +1,6 @@
-import { HttpClient } from '@/types/http-client';
-import { HttpRequest } from '@/types/http-request';
-import { HttpResponse } from '@/types/http-response';
+import { HttpClient } from '@/infra/types/http-client';
+import { HttpRequest } from '@/infra/types/http-request';
+import { HttpResponse } from '@/infra/types/http-response';
 import axios from 'axios';
 
 class AxiosHttpClient implements HttpClient {
@@ -32,3 +32,4 @@ class AxiosHttpClient implements HttpClient {
 const httpClient = AxiosHttpClient.getInstance();
 
 export { httpClient };
+
