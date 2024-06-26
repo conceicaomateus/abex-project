@@ -1,7 +1,7 @@
 import { BaseService } from '../base/base-service';
 
-export class DeleteStudents extends BaseService {
+export class DeleteStudent extends BaseService {
   static async execute(id: number) {
-    await this.request(`students/${id}`, 'delete');
+    await this.request(`student/${id}`, 'delete');
   }
 }

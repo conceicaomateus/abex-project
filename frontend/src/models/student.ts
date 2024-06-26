@@ -1,5 +1,8 @@
 import { User } from "./user";
 
 export type Student = User & {
-  active: boolean;
+  phone: string;
+  cpf: string;
+  course: string;
+  registration: string;
 };

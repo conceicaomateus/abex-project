@@ -2,9 +2,11 @@ import { Outlet, createBrowserRouter } from 'react-router-dom';
 import { AppMiddlewares } from './AppMiddlewares';
 import { AppProviders } from './AppProviders';
 import { AuthGuard, LoginRedirect } from './contexts/AuthContext';
+import { Redirect } from './helpers/redirect';
 import { Login } from './pages/login';
-import { Users } from './pages/users';
-import { CreateUser } from './pages/users/create';
+import { ProjectPage } from './pages/project';
+import { ProjectManagerPage } from './pages/project-manager';
+import { StudentPage } from './pages/student';
 import { MainTemplate } from './templates/main';
 
 export const Router = createBrowserRouter([
@@ -22,20 +24,16 @@ export const Router = createBrowserRouter([
             element: <MainTemplate />,
             children: [
               {
-                path: '/',
-                element: <div>Home</div>,
+                path: '/projetos',
+                element: <ProjectPage />,
               },
               {
-                path: '/projects',
-                element: <h2>projects</h2>,
+                path: '/estudantes',
+                element: <StudentPage />,
               },
               {
-                path: '/users',
-                element: <Users />,
-              },
-              {
-                path: '/create-users',
-                element: <CreateUser />,
+                path: '/gerente-projetos',
+                element: <ProjectManagerPage />,
               },
             ],
           },
@@ -44,6 +42,10 @@ export const Router = createBrowserRouter([
       {
         element: <Login />,
         path: '/login',
+      },
+      {
+        path: '/',
+        element: <Redirect />,
       },
     ],
   },

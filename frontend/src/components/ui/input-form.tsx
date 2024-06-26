@@ -2,11 +2,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FocusEvent, forwardRef } from 'react';
 
-type Props = {
+interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
   type?: React.HTMLInputTypeAttribute;
   onBlur?: (e: FocusEvent<HTMLInputElement, Element>) => void;
-};
+}
 
 export const InputForm = forwardRef<HTMLInputElement, Props>((props, ref) => {
   const nameCapitalized = props.name.charAt(0).toUpperCase() + props.name.slice(1);

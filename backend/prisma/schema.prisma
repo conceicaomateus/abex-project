@@ -20,22 +20,28 @@ model User {
 
   ProjectManagers ProjectManager[]
   Students        Student[]
+  Projects        Project[]
 
   @@map("users")
 }
 
 model ProjectManager {
+  phone       String
   id          Int   @id @default(autoincrement())
   userId      Int   @map("user_id")
 
   user        User  @relation(fields: [userId], references: [id])
-  projects    Project[]
 
   @@map("project_managers")
 }
 
 model Student {
-  id          BigInt    @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
+  registration String @unique
+  phone       String
+  cpf         String
+  course      String
+  
   userId      Int   @map("user_id")
   projectId  Int?   @map("project_id")   
 
@@ -49,14 +55,14 @@ model Project {
   id          Int   @id @default(autoincrement())
   name        String
   description String
-  startDate   DateTime  @map("start_date") @default(now())
+  startDate   DateTime  @map("start_date")
   endDate     DateTime  @map("end_date")
   vacancies   Int
   schedule   String
   active     Boolean  @default(true)
 
-  projectManager        ProjectManager      @relation(fields: [projectManagerId], references: [id])
-  projectManagerId      Int    @map("project_manager_id")
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int    @map("user_id")
 
   students              Student[]
 

@@ -23,7 +23,7 @@ export class UserService implements OnModuleInit {
   }
 
   async create(createUserDto: CreateUserDto) {
-    if (!(await this.isEmailAvailable(createUserDto.email))) throw new Error('Email is not available');
+    if (!(await this.isEmailAvailable(createUserDto.email))) throw new Error('O email não está disponível');
 
     return await this._prisma.user.create({
       data: {
@@ -54,7 +54,7 @@ export class UserService implements OnModuleInit {
   async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
 
-    if (!(await this.isEmailAvailable(updateUserDto.email))) throw new Error('Email is not available');
+    if (!(await this.isEmailAvailable(updateUserDto.email, id))) throw new Error('O email não está disponível');
 
     await this._prisma.user.update({
       where: { id: id },
@@ -63,6 +63,7 @@ export class UserService implements OnModuleInit {
         firstName: updateUserDto.firstName ?? user.firstName,
         lastName: updateUserDto.lastName ?? user.lastName,
         password: updateUserDto.password ?? user.password,
+        active: updateUserDto.active ?? user.active,
       },
     });
   }
@@ -89,12 +90,19 @@ export class UserService implements OnModuleInit {
   
   }
 
-  async isEmailAvailable(email: string) {
+  async isEmailAvailable(email: string, id?: number) {
+    console.log(email, id);
+
     const hasUser = await this._prisma.user.findFirst({
       where: {
         email: email,
+        id: {
+          not: id,
+        },
       },
     });
+
+    console.log(hasUser);
 
     return !hasUser;
   }
